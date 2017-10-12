@@ -42,9 +42,9 @@ def main():
     counter = 1
 
     for word in first_line:
-        word = str(word).rstrip()
+        word = str(word).lower().rstrip()
         #if we find a header that was inputted, awk this column
-        if str(word).lower() in column_headers:
+        if word in column_headers:
             awkcmd = awkcmd + '$' + str(counter) + '"   "'
             #column_headers.remove(word)
         counter+= 1
@@ -63,8 +63,8 @@ def main():
 
     #if column headers were inputted that were not found, tell them
     #if(len(column_headers) > 0):
-        print_invalid_headers(invalid_headers)
-        print("Column header(s) not found: " + str(column_headers))
+        #print_invalid_headers(invalid_headers)
+        #print("Column header(s) not found: " + str(column_headers))
 
     return 0
 
