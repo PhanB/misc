@@ -1,5 +1,5 @@
 #Author: Bailey Phan
-#Date: September 7, 2017
+#Date: October 12, 2017
 #Purpose: Print out columns of a csv with matching headers
 
 import subprocess
@@ -17,9 +17,9 @@ def main():
     an = re.compile('^[\w\s\-\/\\!@#$%^&*()_\{\}~\+]+$') #accepts alphanumeric chars, spaces, and symbols
     for arg in sys.argv[2:]:
         if an.match(arg):
-            column_headers.append(arg)
+            column_headers.append(str(arg).lower())
         else:
-            invalid_headers.append(arg)
+            invalid_headers.append(str(arg).lower())
 
     #if no column headers were accepted don't run program
     if len(column_headers) < 1:
@@ -42,25 +42,27 @@ def main():
     counter = 1
 
     for word in first_line:
+        word = str(word).rstrip()
         #if we find a header that was inputted, awk this column
-        if word in column_headers:
+        if str(word).lower() in column_headers:
             awkcmd = awkcmd + '$' + str(counter) + '"   "'
-            column_headers.remove(word)
+            #column_headers.remove(word)
         counter+= 1
 
-    awkcmd = awkcmd + '}'
+    awkcmd= awkcmd + '}'
     bashcommand.append(awkcmd)
     bashcommand.append(filename)    
 
     #print results
     if(awkcmd != '{ print }'):
         #take results of awk and pipe into column -t to format nicely
+        #output = subprocess.Popen(bashcommand)
         awk = subprocess.Popen(bashcommand,stdout=subprocess.PIPE)
         output = subprocess.Popen(['column', '-t'], stdin=awk.stdout)
         output.wait()
 
     #if column headers were inputted that were not found, tell them
-    if(len(column_headers) > 0):
+    #if(len(column_headers) > 0):
         print_invalid_headers(invalid_headers)
         print("Column header(s) not found: " + str(column_headers))
 
