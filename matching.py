@@ -4,7 +4,7 @@ from datetime import datetime
 
 #CONFIGURABLE VARIABLES
 POP1_FILE = 'cohort1.rpt'
-POP2_FILE = 'cohort3_50.rpt'
+POP2_FILE = 'cohort3.rpt'
 RESULTS_FILE = 'COHORT1_COHORT3_ASSIGNMENT.txt' #Primary Output (assignments)
 INSUFFICIENT_FILE = 'COHORT1_COHORT3_INSUFFICIENT.txt' #Optional Output (gives ID of those who didnt have enough matches)
 DELIMITER = ',' #Delimiter used in files (i.e. ',', '|', '\t')
@@ -35,7 +35,7 @@ printT("Starting...")
 
 #SORT POP 2 INTO BUCKETS BASED ON ALL VARIABLES (EXCEPT ID)
 p2map = {} # (variable1, variable2, ... , variableN) -> list of cohort 3 ID's
-data = list(csv.reader(open(POP2_FILE, 'r'), delimiter='DELIMITER'))
+data = list(csv.reader(open(POP2_FILE, 'r'), delimiter=DELIMITER))
 
 
 insuff = list() # list of those with insufficient matches
@@ -78,6 +78,10 @@ for line in data[HEADER_LINES:-TAIL_LINES]: #customize splice based on format of
             random_index = randrange(0,len(poss_part)) #randomly choose index
             assign[UID].append(poss_part[random_index]) #assign
             del poss_part[random_index] #remove from possible matches (each assignment must have a unique cohort3.UID)
+    else:
+        insuff.append(UID)
+        #print("No matches for" , UID, myTuple)
+
 printT("Writing results to file...")
 
 f = open(RESULTS_FILE, 'w')
@@ -94,7 +98,6 @@ f.close()
 printT("Results written to: " + RESULTS_FILE)
 
 if(len(insuff) > 0):
-    printT('Warning: Number of insufficient matches = ' + str(len(insuff)) + ' (see \'' + INSUFFICIENT_FILE + '\' for full list)')
+    printT('Warning: ' + str(len(insuff)) + ' insufficient matches (see \'' + INSUFFICIENT_FILE + '\' for full list)')
 
 printT("Finished.")
-
